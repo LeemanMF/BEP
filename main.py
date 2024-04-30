@@ -7,7 +7,7 @@ import control as ct
 ## Variables
 g = 9.81
 l = 0.5 #m
-m = 5 #kg
+m = 0.5 #kg
 ## Control matrices
 A = np.array([[0, 0, 1, 0],
              [0, 0, 0, 1],
@@ -26,13 +26,15 @@ D = np.array([0]);
 
 ## Q matrix en R matrix
 
-Q = np.identity(4);
+Q = np.array([[1, 0, 0, 0],
+              [0, 1, 0, 0],
+              [0, 0, 1, 0],
+              [0, 0, 0, 1]]);
 
-R = np.identity(2);
-
+R = np.array([[1, 0],
+              [0, 1]]);
 
 
 ## LQR solver
 K, S, E = ct.lqr(A, B, Q, R);
-
 print(K);
