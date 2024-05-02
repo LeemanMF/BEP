@@ -13,6 +13,8 @@ import time
 
 #board = pyfirmata.Arduino(kijken in arduino IDE)
 
+
+
 ## Variables
 g = 9.81
 l = 0.5 #m
