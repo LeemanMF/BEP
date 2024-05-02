@@ -1,8 +1,17 @@
 import numpy as np
 import control as ct
+import pyfirmata
+import time
 #import matplotlib.pyplot as plt
 #import pandas as ps
 #import SymPy as simp
+
+#variable = board.get_pint(a:0:i)
+# a = analog (a) or digital (d) or pwm (p)
+# 0 = port nummer
+# i = input of output property
+
+#board = pyfirmata.Arduino(kijken in arduino IDE)
 
 ## Variables
 g = 9.81
@@ -44,4 +53,5 @@ print("S-matrix");
 print(S);
 
 ## System
-
+sys = ct.ss(A, B, C, D);
+print(sys);
