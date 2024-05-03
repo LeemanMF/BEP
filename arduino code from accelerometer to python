@@ -16,3 +16,32 @@ Serial.print(theta);
 Serial.print(",");
 Serial.print(psidot);
 }
+
+
+
+Python:
+
+import time
+import board
+import busio
+from adafruit_bno055 import BNO055
+
+# Create I2C bus
+i2c = busio.I2C(board.SCL, board.SDA)
+
+# Create BNO055 sensor object
+bno = BNO055(i2c)
+
+# Optionally change sensor mode (default is IMU)
+bno.mode = BNO055.ACCONLY
+
+while True:
+    # Read Euler angles (in degrees) from the sensor
+    _, _, yaw = bno.euler  # Euler angles of Y and Z axes (pitch and roll)
+    angular_velocity_x = bno.gyro[0]  # Angular velocity of X-axis
+
+    # Print the values
+    print("Pitch (Y-axis): {:.2f} Roll (Z-axis): {:.2f} Angular Velocity (X-axis): {:.2f}".format(yaw, angular_velocity_x))
+
+    # Pause for a short time before repeating
+    time.sleep(0.1)
