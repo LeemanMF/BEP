@@ -1,6 +1,7 @@
-int x=0;
-int y=0;
-int z=0;
+int phi=0;
+int theta=0;
+int psidot=0;
+
 void setup() {
   // put your setup code here, to run once:
 Serial.begin(115200);
@@ -8,10 +9,10 @@ Serial.begin(115200);
 
 void loop() {
   // put your main code here, to run repeatedly:
-x=0;
-phi=y;
-theta=z;
 
 Serial.print(phi);
 Serial.print(",");
-Serial.println(theta);}
+Serial.print(theta);
+Serial.print(",");
+Serial.print(psidot);
+}
