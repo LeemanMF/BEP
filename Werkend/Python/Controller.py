@@ -1,5 +1,8 @@
 import numpy as np
 import control as ct
+from control import matlab as cm
+import matplotlib.pyplot as plt
+
 
 ## Variables
 g = 9.81
@@ -43,7 +46,6 @@ syslqr = ct.ss(A_aug, B, C, D, states=states, input=inputs, output=outputs);
 print(syslqr);
 
 #Check of reachable
-
 # Calculate the controllability matrix
 Cm = ct.ctrb(A, B)
 
@@ -57,3 +59,13 @@ print("Rank of the Controllability Matrix:", rank_Cm)
 print("Is the system reachable?", is_reachable)
 
 #Functie LQR die de berekening doet en de waarden voor de motorkracht teruggeeft
+def LQR_control(theta_dot, theta):
+    x =  np.array([[theta_dot], [theta]])
+    Fmotor1 = -K @ x
+    return Fmotor1
+
+# Voorbeeldwaarden, moet echte sensorwaarden in
+theta_dot_example = -0.1  # Example angular velocity in rad/s
+theta_example = -0.05  # Example angle in rad
+Fmotor1 = LQR_control(theta_dot_example, theta_example)
+print("Motor force needed:", Fmotor1)
