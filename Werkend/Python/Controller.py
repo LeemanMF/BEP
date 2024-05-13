@@ -62,10 +62,12 @@ print("Is the system reachable?", is_reachable)
 def LQR_control(theta_dot, theta):
     x =  np.array([[theta_dot], [theta]])
     Fmotor1 = -K @ x
+    if Fmotor1 > 0:
+        Fmotor1 = 0
     return Fmotor1
 
 # Voorbeeldwaarden, moet echte sensorwaarden in
-theta_dot_example = -0.1  # Example angular velocity in rad/s
-theta_example = -0.05  # Example angle in rad
+theta_dot_example = 0.1  # Example angular velocity in rad/s
+theta_example = 0.05  # Example angle in rad
 Fmotor1 = LQR_control(theta_dot_example, theta_example)
 print("Motor force needed:", Fmotor1)

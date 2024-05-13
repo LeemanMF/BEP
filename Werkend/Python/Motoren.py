@@ -17,12 +17,10 @@ def motor_follow(theta_dot):
     follow_motor_speed = theta_dot / straal_motor
     return follow_motor_speed
 
+
 #Beide functies samengevoegd om totale motorsnelheid te krijgen, motor control alleen aanroepen op een tijdstip. 
 def motor_drive(Fmotor1, theta_dot):
-    if theta_dot >= 0: #Testen of dode punten uitmaken
-        motor_speed = motor_control(Fmotor1) + motor_follow(theta_dot)
-    else :
-        motor_speed = motor_follow(theta_dot)
+    motor_speed = motor_control(Fmotor1) + motor_follow(theta_dot)
     return motor_speed
 
 #Functie om draaisnelheid van de motor om te zetten naar motorcommmando voor arduino
