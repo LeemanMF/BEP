@@ -4,13 +4,15 @@
 #ToDO: Maximale kracht op touw inbouwen
 straal_motor = 1.0 #cm 
 ts_ratio = 0.2 #torque speed ratio
+no_load_speed = 160 #rpm zonder load
+stall_torque = 0.8 #kg/cm
 
 #Functie om de motor kracht te laten uitoefenen
 def motor_control(Fmotor1):
     torque_needed = Fmotor1 / straal_motor
     if torque_needed > 0.2 : #kg/cm, als hoger dan de rated torque (maximale werktorque), zet gelijk aan rated torque
         torque_needed = 0.2 * straal_motor 
-    force_motor_speed = ts_ratio * torque_needed 
+    force_motor_speed = no_load_speed * (1 - torque_needed / stall_torque) 
     return force_motor_speed
 
 #Functie om de motor zonder krachtuitoefening de load te laten volgen
@@ -25,3 +27,9 @@ def motor_drive(Fmotor1, theta_dot):
     return motor_speed
 
 #Functie om draaisnelheid van de motor om te zetten naar motorcommmando voor arduino
+
+
+#test
+Fmotor1example = 0.0 #N
+theta_dotexample = 0.1 #
+print(motor_drive(Fmotor1example, theta_dotexample)); 
