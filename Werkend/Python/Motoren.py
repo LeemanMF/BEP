@@ -1,7 +1,8 @@
 #Functie met kracht uit de LQR functie erin en een setmotorspeed eruit. 
 #De setmotorspeed moet gecheckt worden met de encoder en gecorrigeerd worden.
 #Wellicht omschrijven naar Voltage outputs
-#ToDO: Maximale kracht op touw inbouwen
+
+#ToDO: Maximale kracht op touw inbouwen, failsafe inbouwen als motor sneller moet draaien dan hij kan
 straal_motor = 1.0 #cm 
 ts_ratio = 0.2 #torque speed ratio
 no_load_speed = 160 #rpm zonder load
@@ -30,6 +31,6 @@ def motor_drive(Fmotor1, theta_dot):
 
 
 #test
-Fmotor1example = 0.0 #N
-theta_dotexample = 0.1 #
+Fmotor1example = 0.5 #N
+theta_dotexample = 1 #
 print(motor_drive(Fmotor1example, theta_dotexample)); 
