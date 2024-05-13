@@ -1,11 +1,11 @@
 #main file waarbij alle losse functies worden opgeroepen en uitgevoerd
 #nog niet getest
 
-from Data import data
-print(data())
+from data import data
+from controller import LQR_control
+from Motoren import motor_control
 
-from Controller import LQR_control
-print(LQR_control())
 
-from Motoren import motor_drive
-print(motor_drive())
+theta,z,theta_dot,zdot = data()
+Fmotor1 = LQR_control(theta, theta_dot)
+speed = motor_control(Fmotor1)
