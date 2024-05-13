@@ -1,6 +1,7 @@
 #Functie met kracht uit de LQR functie erin en een setmotorspeed eruit. 
 #De setmotorspeed moet gecheckt worden met de encoder en gecorrigeerd worden.
 #Wellicht omschrijven naar Voltage outputs
+#ToDO: Maximale kracht op touw inbouwen
 straal_motor = 1.0 #cm 
 ts_ratio = 0.2 #torque speed ratio
 
@@ -8,7 +9,7 @@ ts_ratio = 0.2 #torque speed ratio
 def motor_control(Fmotor1):
     torque_needed = Fmotor1 / straal_motor
     if torque_needed > 0.2 : #kg/cm, als hoger dan de rated torque (maximale werktorque), zet gelijk aan rated torque
-        torque_needed = 0.2 
+        torque_needed = 0.2 * straal_motor 
     force_motor_speed = ts_ratio * torque_needed 
     return force_motor_speed
 
