@@ -1,0 +1,79 @@
+def run(self, freq: int, cycles: int, ref: Optional[float | int | Iterable[float|int]]=None, live_plotter: Optional[LivePlotter]=None) -> npt.NDArray[np.float_]:
+        """Run the controller on a shield device.
+
+        :param freq: Desired frequency of the loop.
+        :type freq: int
+        :param cycles: Number of cycles to run the experiment.
+        :type cycles: int
+        :param ref: The reference to follow. It should have a lenght equal to freq * time or be a single value for a constant reference. Defaults to None, in which case the reference is set to 0.
+        :type ref: Optional[float  |  int  |  Iterable[float | int]], optional
+        :param live_plotter: Optional :py:class:`~automationshield.plotting.LivePlotter` instance to use for displaying a live plot, defaults to None.
+        :type live_plotter: ~automationshield.plotting.LivePlotter, optional
+        :return: Experiment data. The columns of the array are time, reference, potentiometer, sensor, actuator, and any additional variables in the order they were added.
+        :rtype: npt.NDArray[np.float\_]
+        """
+
+        cntr = 0
+        maxcntr = cycles
+        period = 1/freq
+
+        # calculate number of additional columns needed
+        extra_hist_size = sum(self.tracked_variables.values())
+        # t1 - tstart, ref, pot, sensor, actuator, any additional variables
+        hist = np.zeros((maxcntr, self.n_base_vars + extra_hist_size))
+
+        # create a zero array if no ref is given
+        if ref is None:
+            ref = np.zeros(maxcntr)
+
+        # expand ref to array if given as integer/float (i.e. constant reference)
+        elif isinstance(ref, (int, float)):
+            ref = ref * np.ones(maxcntr)
+
+        if live_plotter:
+            live_plotter.set_up(cycles, freq)
+            plot_process = live_plotter.get_process()
+            plot_process.start()
+
+        with self.shield as shield:
+            # need an initial write so there's something to read when we get there.
+            shield.write(shield.RUN, 0)
+
+            tstart = time.perf_counter()
+            t0 = t1 = tstart
+
+            done = False
+            while not done:
+                try:
+                    print(f"\r{cntr}", end="")
+
+                    while (t1 - t0) < period:
+                        t1 = time.perf_counter()
+
+                    dt = t1 - t0
+                    t0 = t1
+
+                    pot, sensor = shield.read()
+                    raw_actuator = self.controller(t1 - tstart, dt, ref[cntr], pot, sensor)
+                    actuator = shield.write(shield.RUN, raw_actuator)
+
+                    self._update_hist(hist, cntr, t1 - tstart, ref[cntr], pot, sensor, actuator)
+
+                    if live_plotter:
+                        live_plotter.add_data_to_queue(t1 - tstart, ref[cntr], pot, sensor, actuator/(2**shield.actuator_bits/100))
+
+                    cntr += 1
+                    if cntr == maxcntr:
+                        done = True
+
+                except KeyboardInterrupt:
+                    done = True
+
+            print()
+
+        # signals to terminate live plot
+        if live_plotter:
+            live_plotter.add_data_to_queue(-1, -1, -1, -1, -1)
+            plot_process.join()
+
+        return hist
