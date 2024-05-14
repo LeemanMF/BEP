@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def run(self, freq: int, cycles: int, ref: Optional[float | int | Iterable[float|int]]=None, live_plotter: Optional[LivePlotter]=None) -> npt.NDArray[np.float_]:
         """Run the controller on a shield device.
 
