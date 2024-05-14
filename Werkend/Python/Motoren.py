@@ -36,8 +36,8 @@ def motor_drive(Fmotor1, theta_dot):
 
 
 #test
-Fmotor1example = 0.06 #N
-theta_dotexample = -5 #
+Fmotor1example = -0.067 #N
+theta_dotexample = 5 #
 print("Motor follow",motor_follow(theta_dotexample));
 print("Motor kracht",motor_control(Fmotor1example));
 print("Totaal",motor_drive(Fmotor1example, theta_dotexample)); 
