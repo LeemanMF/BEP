@@ -1,22 +1,11 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 
-  
-// This alternate version of the code does not require
-// atomic.h. Instead, interrupts() and noInterrupts() 
-// are used. Please use this code if your 
-// platform does not support ATOMIC_BLOCK.
-
 #define ENCA 3 // YELLOW
 #define ENCB 2 // WHITE
 #define PWM 5
 #define IN2 6
 #define IN1 7
-
-//volatile int posi = 0; // specify posi as volatile: https://www.arduino.cc/reference/en/language/variables/variable-scope-qualifiers/volatile/
-//long prevT = 0;
-//float eprev = 0;
-//float eintegral = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -68,23 +57,8 @@ void loop() {
   // motor power
   float pps = Serial.read();
   int dir;
-
-//  int getMin(int array, int size);
-//  int minimum = array[0];
-//  for (int i = 0; i < size; i++){
-//    if (array[i] < minimum) minimum = array[i];}
-//    
-//
-//  int getMax(int array, int size){
-//  int maximum = array[0];
-//  for (int i = 0; i < size; i++){
-//    if (array[i] > maximum) maximum = array[i];}
   
-
   // motor direction
-  int pss_min;
-  int pss_max;
-  
   if(pps<0){
     dir = -1;
     pps = abs(min(pps,0));
@@ -97,13 +71,12 @@ void loop() {
   int range = 64000; //max hoeveelheid
   int motor_value = pps*255/range;
 
+// signal the motor
   setMotor(dir,motor_value,PWM,IN1,IN2);
 
   Serial.println(motor_value);
   }
-  // signal the motor
-  
-  //Motor.run(motor_value);
+
   // store previous error
 //  eprev = e;
 
@@ -136,5 +109,5 @@ void setMotor(int dir, int motor_value, int pwm, int in1, int in2){
 //  }
 //  else{
 //    posi--;
-//  }
+// println(b) }
 //}
