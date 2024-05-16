@@ -1,18 +1,7 @@
 import numpy as np
 import control as ct
-import pyfirmata
-import time
-#import matplotlib.pyplot as plt
-#import pandas as ps
-#import SymPy as simp
-
-#variable = board.get_pint(a:0:i)
-# a = analog (a) or digital (d) or pwm (p)
-# 0 = port nummer
-# i = input of output property
-
-#board = pyfirmata.Arduino(kijken in arduino IDE)
-
+from control import matlab as cm
+import matplotlib.pyplot as plt
 
 
 ## Variables
@@ -22,38 +11,77 @@ m = 0.5 #kg
 
 
 ## ABCD Matrices
-A = np.array([[0, 0, 1, 0],
-             [0, 0, 0, 1],
-             [0, -(g/l), 0,0],
-             [-(g/l), 0, 0, 0]]);
+A = np.array([[ 0 , -g/l], [1, 0]]);
 
-B = np.array([[0, 0],
-             [0, 0],
-             [(1/m), 0],
-             [0, (1/m)]]);
+B = np.array([[0],[1/(m*l)]]);
 
-C = np.array([[1, 0, 0, 0],
-             [0, 1, 0, 0]]);
+C = np.array([[0, 1]]);
 
 D = np.array([0]);
 
 ## Q matrix en R matrix
 
-Q = np.array([[1, 0, 0, 0],
-              [0, 1, 0, 0],
-              [0, 0, 0, 0],
-              [0, 0, 0, 0]]);
-
-R = np.array([[1, 0],
+Q = np.array([[1, 0],
               [0, 1]]);
 
-## LQR solver
-K, S, E = ct.lqr(A, B, Q, R);
-print("K-matrix");
-print(K);
-print("S-matrix");
-print(S);
+R = np.array([[1]]);
 
-## System
+#Maak het systeem
 sys = ct.ss(A, B, C, D);
-print(sys);
+
+#Definieer inputs en outputs en states
+
+states = ["theta_dot", "theta"]
+inputs = ["Fmotor1"]
+outputs = ["theta"]
+
+#Bereken de K-matrix
+K, _, _ = ct.lqr(A, B, Q, R);
+
+#Bereken de nieuwe A en B matrixen
+A_aug = A - B@K
+
+#Nieuw LQR systeem: 
+syslqr = ct.ss(A_aug, B, C, D, states=states, input=inputs, output=outputs); 
+print(syslqr);
+
+#Check of reachable
+# Calculate the controllability matrix
+Cm = ct.ctrb(A, B)
+
+# Check if the system is reachable
+rank_Cm = np.linalg.matrix_rank(Cm)
+is_reachable = rank_Cm == A.shape[0]
+
+print("Controllability Matrix:")
+print(Cm)
+print("Rank of the Controllability Matrix:", rank_Cm)
+print("Is the system reachable?", is_reachable)
+
+#Functie LQR die de berekening doet en de waarden voor de motorkracht teruggeeft
+def LQR_control(theta_dot, theta):
+    x =  np.array([[theta_dot], [theta]])
+    Fmotor1 = -K @ x
+    if Fmotor1 > 0:
+        Fmotor1 = 0
+    return Fmotor1
+
+#Tijdpunten voor simulatie
+t = np.linspace(0, 5, 1000)
+
+#Step response
+t, y = ct.step_response(syslqr, T = t)
+
+#plot
+plt.plot(t,y)
+plt.xlabel('Time (s)')
+plt.ylabel('Angle (rad)')
+plt.title('Impulse response of the LQR pendulum system')
+plt.grid(True)
+plt.show()
+
+# Voorbeeldwaarden, moet echte sensorwaarden in
+#theta_dot_example = 0.1  # Example angular velocity in rad/s
+#theta_example = 0.05  # Example angle in rad
+#Fmotor1 = LQR_control(theta_dot_example, theta_example)
+#print("Motor force needed:", Fmotor1)
