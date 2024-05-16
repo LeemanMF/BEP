@@ -6,7 +6,7 @@ import time
 import serial #import van programma om arduino uit te lezen
 
 def data():
-    arduinoData=serial.Serial('com7',115200) # juiste arduino selecteren
+    arduinoData=serial.Serial('COM3',115200) # juiste arduino selecteren
     time.sleep(1)
     while (True):   #zorgen dat python info blijft ophalen
         with arduinoData:
@@ -24,6 +24,6 @@ def data():
             z=float(splitPacket[1])
             theta_dot=float(splitPacket[2])
             zdot=float(splitPacket[3])
-            print ("theta=",theta," z=",z," theta_dot=",theta_dot, "zdot=",zdot) # print variabelen
+            print ("theta=",theta," theta_dot=",theta_dot) # print variabelen
         return theta,z,theta_dot,zdot
 

@@ -47,16 +47,16 @@ print(syslqr);
 
 #Check of reachable
 # Calculate the controllability matrix
-Cm = ct.ctrb(A, B)
+#Cm = ct.ctrb(A, B)
 
 # Check if the system is reachable
-rank_Cm = np.linalg.matrix_rank(Cm)
-is_reachable = rank_Cm == A.shape[0]
+#rank_Cm = np.linalg.matrix_rank(Cm)
+#is_reachable = rank_Cm == A.shape[0]
 
-print("Controllability Matrix:")
-print(Cm)
-print("Rank of the Controllability Matrix:", rank_Cm)
-print("Is the system reachable?", is_reachable)
+#print("Controllability Matrix:")
+#print(Cm)
+#print("Rank of the Controllability Matrix:", rank_Cm)
+#print("Is the system reachable?", is_reachable)
 
 #Functie LQR die de berekening doet en de waarden voor de motorkracht teruggeeft
 def LQR_control(theta_dot, theta):
@@ -67,7 +67,7 @@ def LQR_control(theta_dot, theta):
     return Fmotor1
 
 # Voorbeeldwaarden, moet echte sensorwaarden in
-theta_dot_example = 0.1  # Example angular velocity in rad/s
-theta_example = 0.05  # Example angle in rad
-Fmotor1 = LQR_control(theta_dot_example, theta_example)
-print("Motor force needed:", Fmotor1)
+#theta_dot_example = 0.1  # Example angular velocity in rad/s
+#theta_example = 0.05  # Example angle in rad
+#Fmotor1 = LQR_control(theta_dot_example, theta_example)
+#print("Motor force needed:", Fmotor1)
