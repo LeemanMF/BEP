@@ -7,6 +7,7 @@ from Motoren import motor_drive
 from Plot import real_time_plot
 import time
 
+
 duration = 100
 start_time = time.time()
 while time.time() - start_time < duration:

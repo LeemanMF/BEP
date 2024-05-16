@@ -10,7 +10,7 @@ def real_time_plot():
 
     #Interactieve grafiek
     plt.ion()
-    fig, ax = plt.subplot()
+    ax = plt.subplot()
     line, = ax.plot(plott, plottheta)
 
     plt.xlabel('Tijd')
@@ -19,7 +19,8 @@ def real_time_plot():
 
     while True:
         new_t = time.time()
-        new_theta = data().theta
+        theta, z, theta_dot, zdot = data()
+        new_theta = theta
 
         plott.append(new_t)
         plottheta.append(new_theta)
@@ -32,3 +33,4 @@ def real_time_plot():
 
         plt.draw
         plt.pause(0.1)
+        break
