@@ -31,6 +31,6 @@ def real_time_plot():
         ax.relim()
         ax.autoscale_view()
 
-        plt.draw
+        plt.draw()
         plt.pause(0.1)
         break

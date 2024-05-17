@@ -74,7 +74,7 @@ void loop() {
 // signal the motor
   setMotor(dir,motor_value,PWM,IN1,IN2);
 
-  Serial.println(motor_value);
+  //Serial.println(motor_value);
   }
 
   // store previous error

@@ -5,11 +5,11 @@
 import time
 import serial #import van programma om arduino uit te lezen
 
-def data():
-    arduinoData=serial.Serial('COM3',115200) # juiste arduino selecteren
+def data(connectie):
+    arduinoData= connectie #serial.Serial('COM3',115200) # juiste arduino selecteren
     time.sleep(1)
     while (True):   #zorgen dat python info blijft ophalen
-        with arduinoData:
+        with arduinoData: #arduinoData:
             while (arduinoData.inWaiting()==0): #combineert python en arduino op de arduino, voorkomt afsluiten
                 pass
             dataPacket = arduinoData.readline() #uitlezen van data
