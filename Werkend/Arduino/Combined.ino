@@ -25,7 +25,7 @@
    2015/MAR/03  - First release (KTOWN)
 */
 /* Set the delay between fresh samples */
-#define BNO055_SAMPLERATE_DELAY_MS (100)
+#define BNO055_SAMPLERATE_DELAY_MS (10)
 
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
@@ -33,7 +33,7 @@ Adafruit_BNO055 bno = Adafruit_BNO055(-1, 0x28, &Wire);
 
 void setup(void)
 {
-  Serial.begin(115200);
+  Serial.begin(230400);
   while (!Serial) delay(10);  // wait for serial port to open!
 
   // Serial.println("Orientation Sensor Raw Data Test"); Serial.println("");
@@ -78,7 +78,8 @@ void loop(void)
   Serial.print(gyr.y());
   Serial.print(",");
   Serial.println(gyr.z());
-  delay(500);
+  delay(100);
+
   // /* Display calibration status for each sensor. */
 // if(system < 3);
 //   {
@@ -92,10 +93,11 @@ void loop(void)
 ////   Serial.print(" Mag=");
 ////   Serial.println(mag, DEC);
 // }
-
-  // 
+// 
   // delay(BNO055_SAMPLERATE_DELAY_MS);
-  float pps = Serial.read();
+  int pps = Serial.readStringUntil(0x0a).toInt();
+  Serial.println(pps, DEC);
+  // float pps = 0;
   int dir;
   
   // motor direction
@@ -108,8 +110,10 @@ void loop(void)
     pps = max(0,pps);
     }
 
-  int range = 64000; //max hoeveelheid
-  int motor_value = pps*255/range;
+  int motor_value = pps;
+
+  // int range = 64000; //max hoeveelheid
+  // int motor_value = pps*255/range;
 
 // signal the motor
   setMotor(dir,motor_value,PWM,IN1,IN2);
@@ -134,3 +138,4 @@ void setMotor(int dir, int motor_value, int pwm, int in1, int in2){
     digitalWrite(in2,LOW);
   }  
 }
+  

@@ -28,6 +28,7 @@ from Data import data
 from Controller import LQR_control
 from Motoren import motor_drive
 import time
+import threading
 
 def check_port_availability(port):
     try:
@@ -39,17 +40,24 @@ def check_port_availability(port):
         return False
 
 # Replace 'COM3' with the port you want to check
-port_name = 'COM3'
+port_name = 'COM11'
 available = check_port_availability(port_name)
 print(f"Port {port_name} is available: {available}")
 
 
-Leonardo = serial.Serial('COM3',115200) #connectie met Arduino
+Leonardo = serial.Serial('COM11',230400) #connectie met Arduino
 time.sleep(1)
 duration = 100
 start_time = time.time()
 while time.time() - start_time < duration:
+    print(Leonardo.readline().decode())
     theta,z,theta_dot,zdot = data(Leonardo)
     Fmotor1 = LQR_control(theta, theta_dot)
     pps = motor_drive(Fmotor1, theta_dot)
-    Leonardo.write(b'pps')
+    # if not Leonardo.is_open:
+    #     Leonardo.open()
+    print(pps)
+    # if Leonardo.is_open:
+    Leonardo.write(f"{pps}\n".encode())
+    print("Hello2")
+    
