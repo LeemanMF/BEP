@@ -1,0 +1,56 @@
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BNO055.h>
+
+#define MOTOR_PWM_PIN 5
+#define MOTOR_DIRECTION_PIN1 7
+#define MOTOR_DIRECTION_PIN2 6
+#define MAX_DISTANCE_X 180       // Maximum distance along X-axis
+#define MIN_SPEED 50             // Minimum motor speed
+#define MAX_SPEED 255            // Maximum motor speed
+
+Adafruit_BNO055 bno = Adafruit_BNO055();
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+  if (!bno.begin()) {
+    Serial.println("BNO055 not detected");
+    while (1);
+  }
+  pinMode(MOTOR_PWM_PIN, OUTPUT);
+  pinMode(MOTOR_DIRECTION_PIN1, OUTPUT);
+  pinMode(MOTOR_DIRECTION_PIN2, OUTPUT);
+}
+
+void loop() {
+  sensors_event_t event;
+  bno.getEvent(&event);
+  
+  // Read X position data from the sensor
+  float xPosition = event.orientation.x;
+
+  // Set target X position
+  float targetX = 0;  // Example: move towards X = 90
+
+  // Calculate motor speed based on distance to target
+  int motorSpeedX = map(abs(xPosition - targetX), 0, MAX_DISTANCE_X, MIN_SPEED, MAX_SPEED);
+
+  // Set motor direction based on the target position
+  digitalWrite(MOTOR_DIRECTION_PIN1, xPosition < targetX ? HIGH : LOW);
+  digitalWrite(MOTOR_DIRECTION_PIN2, xPosition >= targetX ? HIGH : LOW);
+  
+  // Set motor speed using PWM
+  analogWrite(MOTOR_PWM_PIN, motorSpeedX);
+
+  // Print data to serial monitor
+  Serial.print("X Position: ");
+  Serial.println(xPosition);
+  Serial.print("Target X: ");
+  Serial.println(targetX);
+  Serial.print("Motor Speed X: ");
+  Serial.println(motorSpeedX);
+  Serial.println("------------------------");
+
+  delay(100); // Adjust delay as needed
+}
