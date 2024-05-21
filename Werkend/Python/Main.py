@@ -40,12 +40,12 @@ def check_port_availability(port):
         return False
 
 # Replace 'COM3' with the port you want to check
-port_name = 'COM11'
+port_name = 'COM6'
 available = check_port_availability(port_name)
 print(f"Port {port_name} is available: {available}")
 
 
-Leonardo = serial.Serial('COM11',230400) #connectie met Arduino
+Leonardo = serial.Serial('COM6',230400) #connectie met Arduino
 time.sleep(1)
 duration = 100
 start_time = time.time()

@@ -5,13 +5,31 @@
 #ToDO: Maximale kracht op touw inbouwen, failsafe inbouwen als motor sneller moet draaien dan hij kan
 #Check: Wellicht moet motor_drive soms + en soms - elkaar!
 import numpy as np
+import pandas as pd
+from scipy.interpolate import interp1d
 
-#RPM of rad/s?
+
+#Motorkarakteristiek uit Excel !! AANPASSEN 2 MOTOREN !!
+excel_naam = 'C:\\Users\\maxpo\\Desktop\\Motoren.xlsx'
+motorA_naam = 'MotorA'
+df = pd.read_excel(excel_naam, motorA_naam, usecols=['PWM', 'RPM'])
+
+pwm_values = df['PWM'].values
+rpm_values = df['RPM'].values
+
+interp_func = interp1d(rpm_values, pwm_values, kind='nearest', fill_value='extrapolate')
+
+#PWM corresponderend met RPM
+def find_motor_pwm(rpm):
+    return int(interp_func(rpm))
+
+#Variabelen
 straal_motor = 0.01 #m 
 ts_ratio = 0.2 #torque speed ratio
 no_load_speed = 160 * 2 * np.pi / 60 #rad/s zonder load
 stall_torque = 0.8 * 9.81 * 0.01 #N/m
 rated_torque = 0.2 * 9.81 * 0.01 #N/m
+lengte_pendulum = 0.5 #in meter
 
 #Functie om de motor kracht te laten uitoefenen
 def motor_control(Fmotor1):
@@ -19,17 +37,17 @@ def motor_control(Fmotor1):
     if torque_needed > rated_torque : #N/m, als hoger dan de rated torque (maximale werktorque), zet gelijk aan rated torque
         torque_needed = rated_torque * straal_motor 
     force_motor_speed = no_load_speed - (no_load_speed * (1 - torque_needed / stall_torque)) 
-    return force_motor_speed
+    return float(force_motor_speed) #rpm/s
 
 #Functie om de motor zonder krachtuitoefening de load te laten volgen
 def motor_follow(theta_dot): 
-    follow_motor_speed = theta_dot / straal_motor
-    return follow_motor_speed
+    follow_motor_speed = (theta_dot * lengte_pendulum) / straal_motor
+    return float(follow_motor_speed * 60 / (2 * np.pi)) #in rpm
 
 
 #Beide functies samengevoegd om totale motorsnelheid te krijgen, motor control alleen aanroepen op een tijdstip. 
 def motor_drive(Fmotor1, theta_dot):
-    motor_speed = 16*(motor_follow(theta_dot) + motor_control(Fmotor1))
+    motor_speed = find_motor_pwm((motor_follow(theta_dot) + motor_control(Fmotor1)))
     return motor_speed
 
 #Functie om draaisnelheid van de motor om te zetten naar motorcommmando voor arduino
