@@ -28,7 +28,6 @@ from Data import data
 from Controller import LQR_control
 from Motoren import motor_drive
 import time
-import threading
 
 def check_port_availability(port):
     try:
