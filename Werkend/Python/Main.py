@@ -54,10 +54,6 @@ while time.time() - start_time < duration:
     theta,z,theta_dot,zdot = data(Leonardo)
     Fmotor1 = LQR_control(theta, theta_dot)
     pps = motor_drive(Fmotor1, theta_dot)
-    # if not Leonardo.is_open:
-    #     Leonardo.open()
     print(pps)
-    # if Leonardo.is_open:
     Leonardo.write(f"{pps}\n".encode())
-    print("Hello2")
     

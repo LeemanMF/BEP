@@ -49,13 +49,3 @@ def motor_follow(theta_dot):
 def motor_drive(Fmotor1, theta_dot):
     motor_speed = find_motor_pwm((motor_follow(theta_dot) + motor_control(Fmotor1)))
     return motor_speed
-
-#Functie om draaisnelheid van de motor om te zetten naar motorcommmando voor arduino
-
-
-#test
-#Fmotor1example = -0.067 #N
-#theta_dotexample = 5 #
-#print("Motor follow",motor_follow(theta_dotexample));
-#print("Motor kracht",motor_control(Fmotor1example));
-#print("Totaal",motor_drive(Fmotor1example, theta_dotexample)); 
