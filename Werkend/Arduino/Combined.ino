@@ -95,6 +95,7 @@ void loop(void)
 // }
 // 
   // delay(BNO055_SAMPLERATE_DELAY_MS);
+  if (Serial.available() > 0) {
   int pps = Serial.readStringUntil(0x0a).toInt();
   Serial.println(pps, DEC);
   // float pps = 0;
@@ -118,7 +119,7 @@ void loop(void)
 // signal the motor
   setMotor(dir,motor_value,PWM,IN1,IN2);
 
-
+  }
   
 }
 
