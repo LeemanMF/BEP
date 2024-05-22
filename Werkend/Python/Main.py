@@ -28,6 +28,8 @@ from Data import data
 from Controller import LQR_control
 from Motoren import motor_drive
 import time
+from Plot import update_real_time_plot 
+from Plot import init_real_time_plot
 
 def check_port_availability(port):
     try:
@@ -45,6 +47,7 @@ print(f"Port {port_name} is available: {available}")
 
 
 Leonardo = serial.Serial('COM6',230400) #connectie met Arduino
+fig, ax, line, plott, plottheta = init_real_time_plot()
 time.sleep(1)
 duration = 100
 start_time = time.time()
@@ -55,4 +58,6 @@ while time.time() - start_time < duration:
     pps = motor_drive(Fmotor1, theta_dot)
     print(pps)
     Leonardo.write(f"{pps}\n".encode())
+    #update the plot
+    update_real_time_plot(fig, ax, line, plott, plottheta)
     
