@@ -35,9 +35,9 @@ lengte_pendulum = 0.5 #in meter
 def motor_control(Fmotor1):
     torque_needed = Fmotor1 / straal_motor
     if torque_needed > rated_torque : #N/m, als hoger dan de rated torque (maximale werktorque), zet gelijk aan rated torque
-        torque_needed = rated_torque * straal_motor 
-    force_motor_speed = no_load_speed - (no_load_speed * (1 - torque_needed / stall_torque)) 
-    return float(force_motor_speed) #rpm/s
+        torque_needed = rated_torque 
+    force_motor_speed =  (no_load_speed - (no_load_speed * (1 - torque_needed / stall_torque))) * 60 / (2*np.pi) 
+    return float(force_motor_speed) #RPM
 
 #Functie om de motor zonder krachtuitoefening de load te laten volgen
 def motor_follow(theta_dot): 
