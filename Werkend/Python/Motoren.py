@@ -40,12 +40,15 @@ def motor_control(Fmotor1):
     return float(force_motor_speed) #RPM
 
 #Functie om de motor zonder krachtuitoefening de load te laten volgen
-def motor_follow(theta_dot): 
-    follow_motor_speed = (theta_dot * lengte_pendulum) / straal_motor
-    return float(follow_motor_speed * 60 / (2 * np.pi)) #in rpm
-
+def motor_follow(theta, theta_dot): 
+    if abs(theta) < 5 and abs(theta_dot) < 0.2:
+        theta_dot = 0
+        follow_motor_speed = 0
+    else :
+        follow_motor_speed = (theta_dot) / straal_motor #Lengte pendulum is vgm niet nodig gezien de sensor op de massa hangt
+    return float(follow_motor_speed * 60 / (2 * np.pi)) #RPM
 
 #Beide functies samengevoegd om totale motorsnelheid te krijgen, motor control alleen aanroepen op een tijdstip. 
-def motor_drive(Fmotor1, theta_dot):
-    motor_speed = find_motor_pwm((motor_follow(theta_dot) + motor_control(Fmotor1)))
+def motor_drive(Fmotor1, theta, theta_dot):
+    motor_speed = find_motor_pwm((motor_follow(theta, theta_dot))) #+ motor_control(Fmotor1)))
     return motor_speed

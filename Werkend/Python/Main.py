@@ -47,17 +47,22 @@ print(f"Port {port_name} is available: {available}")
 
 
 Leonardo = serial.Serial('COM6',230400) #connectie met Arduino
-fig, ax, line, plott, plottheta = init_real_time_plot()
+fig, ax, line_theta, line_thetadot, plott, plottheta, plotthetadot = init_real_time_plot()
 time.sleep(1)
-duration = 100
+duration = 50
 start_time = time.time()
 while time.time() - start_time < duration:
     print(Leonardo.readline().decode())
     theta,z,theta_dot,zdot = data(Leonardo)
     Fmotor1 = LQR_control(theta, theta_dot)
-    pps = motor_drive(Fmotor1, theta_dot)
+    pps = motor_drive(Fmotor1, theta, theta_dot)
     print(pps)
     Leonardo.write(f"{pps}\n".encode())
     #update the plot
-    update_real_time_plot(fig, ax, line, plott, plottheta)
-    
+    update_real_time_plot(fig, ax, line_theta, line_thetadot, plott, plottheta, plotthetadot, Leonardo)
+    time.sleep(0.1)
+   
+
+print("Finished")
+Leonardo.write(f"{0}\n".encode())
+

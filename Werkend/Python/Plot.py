@@ -42,29 +42,37 @@ def init_real_time_plot():
     # Create empty lists for the plots
     plott = []
     plottheta = []
+    plotthetadot = []
 
     # Interactive plot
     plt.ion()
     fig, ax = plt.subplots()
-    line, = ax.plot(plott, plottheta)
+    line_theta, = ax.plot(plott, plottheta, label='Theta', color='blue')
+    line_thetadot, = ax.plot(plott, plotthetadot, label = 'Theta_dot', color='red')
 
     plt.xlabel('Tijd')
-    plt.ylabel('Theta')
+    plt.ylabel('Theta, Thetadot')
     plt.title('Real-Time Measured Theta')
+    plt.legend()
 
-    return fig, ax, line, plott, plottheta
+    return fig, ax, line_theta, line_thetadot, plott, plottheta, plotthetadot
 
 
-def update_real_time_plot(fig, ax, line, plott, plottheta):
+def update_real_time_plot(fig, ax, line_theta, line_thetadot, plott, plottheta, plotthetadot, connectie):
     new_t = time.time()
-    theta, z, theta_dot, zdot = data()
+    theta, z, theta_dot, zdot = data(connectie)
     new_theta = theta
+    new_thetadot = theta_dot
 
     plott.append(new_t)
     plottheta.append(new_theta)
+    plotthetadot.append(new_thetadot)
 
-    line.set_xdata(plott)
-    line.set_ydata(plottheta)
+    line_theta.set_xdata(plott)
+    line_theta.set_ydata(plottheta)
+
+    line_thetadot.set_xdata(plott)
+    line_thetadot.set_ydata(plotthetadot)
 
     ax.relim()
     ax.autoscale_view()
