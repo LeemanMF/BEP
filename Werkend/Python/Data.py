@@ -1,52 +1,34 @@
-#script met...
-#in: arduino data
-#out: y, ydot, z, zdot (hoek en hoeksnelheid in 2 vlakken)
-
+import serial
 import time
-import serial #import van programma om arduino uit te lezen
+from Filter import butter_lowpass_filter
+import numpy as np
 
-#def data(connectie):
-    #arduinoData= connectie #serial.Serial('COM3',115200) # juiste arduino selecteren
+def initialize_data_buffers(buffer_size):
+    return np.zeros(buffer_size), np.zeros(buffer_size), np.zeros(buffer_size), np.zeros(buffer_size)
 
-    #time.sleep(1)
-    #while (True):   #zorgen dat python info blijft ophalen
-        #with arduinoData: #arduinoData:
-            #while (arduinoData.inWaiting()==0): #combineert python en arduino op de arduino, voorkomt afsluiten
-                #pass
-            #dataPacket = arduinoData.readline() #uitlezen van data
-            #dataPacket=str(dataPacket,'utf-8')
-            #dataPacket = dataPacket.decode('utf-8').strip() #data is vorm zetten zonder 'b en 'n/r
-            #print(dataPacket)
-            #splitPacket=dataPacket.split(",") #losse variabelen selecteren
-            #print(splitPacket)
-            #print(type (splitPacket))
-            #time.sleep(.2)
-            #theta=float(splitPacket[0]) #los variabel oproepen als float
-            #z=float(splitPacket[1])
-            #theta_dot=float(splitPacket[2])
-            #zdot=float(splitPacket[3])
-            #print ("theta=",theta," theta_dot=",theta_dot) # print variabelen
-            #break
-        
-
-def data(connectie):
-    arduinoData= connectie #serial.Serial('COM3',115200) # juiste arduino selecteren
-    # time.sleep(1)
-    while (arduinoData.inWaiting()==0): #combineert python en arduino op de arduino, voorkomt afsluiten
+def data(connectie, theta_buffer, z_buffer, theta_dot_buffer, z_dot_buffer, cutoff_freq, fs, order=5):
+    arduinoData = connectie
+    while arduinoData.inWaiting() == 0:
         pass
-    dataPacket = arduinoData.readline() #uitlezen van data
-    #dataPacket=str(dataPacket,'utf-8')
-    dataPacket = dataPacket.decode('utf-8').strip() #data is vorm zetten zonder 'b en 'n/r
-    #print(dataPacket)
-    splitPacket=dataPacket.split(",") #losse variabelen selecteren
-    #print(splitPacket)
-    #print(type (splitPacket))
-    #time.sleep(.2)
-    theta=float(splitPacket[0]) #los variabel oproepen als float
-    z=float(splitPacket[1])
-    theta_dot=float(splitPacket[2])
-    zdot=float(splitPacket[3])
-    print ("theta=",theta," theta_dot=",theta_dot) # print variabelen
-    return theta,z,theta_dot,zdot
+    data_packet = arduinoData.readline().decode('utf-8').strip()
+    split_packet = data_packet.split(",")
     
-        
+    # Extract raw sensor data
+    raw_theta = float(split_packet[0])
+    raw_z = float(split_packet[1])
+    raw_theta_dot = float(split_packet[2])
+    raw_z_dot = float(split_packet[3])
+    
+    # Append raw data to buffers
+    theta_buffer = np.append(theta_buffer[1:], raw_theta)
+    z_buffer = np.append(z_buffer[1:], raw_z)
+    theta_dot_buffer = np.append(theta_dot_buffer[1:], raw_theta_dot)
+    z_dot_buffer = np.append(z_dot_buffer[1:], raw_z_dot)
+    
+    # Apply low-pass filter to the raw sensor data
+    filtered_theta = butter_lowpass_filter(theta_buffer, cutoff_freq, fs, order)[-1]
+    filtered_z = butter_lowpass_filter(z_buffer, cutoff_freq, fs, order)[-1]
+    filtered_theta_dot = butter_lowpass_filter(theta_dot_buffer, cutoff_freq, fs, order)[-1]
+    filtered_z_dot = butter_lowpass_filter(z_dot_buffer, cutoff_freq, fs, order)[-1]
+    
+    return raw_theta, raw_z, raw_theta_dot, raw_z_dot, filtered_theta, filtered_z, filtered_theta_dot, filtered_z_dot
