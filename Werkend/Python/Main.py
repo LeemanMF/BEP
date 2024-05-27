@@ -27,7 +27,7 @@ Leonardo = serial.Serial('COM9',230400)
 #     fs = 100
 #     order = 5
 def plot():
-    Leonardo = new_func() #connectie met Arduino
+    Leonardo = serial.Serial('COM9',230400) #connectie met Arduino
     fig, ax, line_theta, line_thetadot, plott, plottheta, plotthetadot = init_real_time_plot()
 
     time.sleep(1)
@@ -47,10 +47,7 @@ def plot():
         plt.pause(0.1)
     plt.show(block=True)
 
-def new_func():
-    return serial.Serial('COM9',230400)
-
-print(data(Leonardo))
+print(data())
 Leonardo.write(f"{0}\n".encode())
     # Leonardo = serial.Serial(port_name, 230400)  # Connect to Arduino
     # fig, ax, line_theta, line_thetadot, line_raw_theta, line_filtered_theta, plott, plottheta, plotthetadot, plotrawtheta, plotfilteredtheta = init_real_time_plot()
