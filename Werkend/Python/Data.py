@@ -47,6 +47,4 @@ def data(connectie):
     theta_dot=float(splitPacket[2])
     zdot=float(splitPacket[3])
     print ("theta=",theta," theta_dot=",theta_dot) # print variabelen
-    return theta,z,theta_dot,zdot
-    
-        
+    return theta,z,theta_dot,zdot      

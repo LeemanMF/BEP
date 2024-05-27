@@ -48,8 +48,10 @@ print(f"Port {port_name} is available: {available}")
 
 
 Leonardo = serial.Serial('COM9',230400) #connectie met Arduino
-fig, ax, line_theta, line_thetadot, plott, plottheta, plotthetadot = init_real_time_plot()
-#time.sleep(1)
+# fig, ax, line_theta, line_thetadot, plott, plottheta, plotthetadot = init_real_time_plot()
+# plt.ion()
+
+time.sleep(1)
 duration = 100
 start_time = time.time()
 while time.time() - start_time < duration:
@@ -60,10 +62,10 @@ while time.time() - start_time < duration:
     print(pps)
     Leonardo.write(f"{pps}\n".encode())
     #update the plot
-    update_real_time_plot(fig, ax, line_theta, line_thetadot, plott, plottheta, plotthetadot, Leonardo)
-    plt.pause(0.1)
+    #update_real_time_plot(fig, ax, line_theta, line_thetadot, plott, plottheta, plotthetadot, Leonardo)
+    #plt.pause(0.1)
    
-plt.show(block=True)
+#plt.show(block=True)
 
 print("Finished")
 Leonardo.write(f"{0}\n".encode())

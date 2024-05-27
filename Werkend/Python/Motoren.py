@@ -10,7 +10,7 @@ from scipy.interpolate import interp1d
 
 
 #Motorkarakteristiek uit Excel !! AANPASSEN 2 MOTOREN !!
-excel_naam = 'C:\\Users\\maxpo\\Desktop\\Motoren.xlsx'
+excel_naam = r"C:\Users\jikke\Downloads\Motoren.xlsx"
 motorA_naam = 'MotorA'
 df = pd.read_excel(excel_naam, motorA_naam, usecols=['PWM', 'RPM'])
 
