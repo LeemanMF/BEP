@@ -30,6 +30,7 @@ from Motoren import motor_drive
 import time
 from Plot import update_real_time_plot 
 from Plot import init_real_time_plot
+import matplotlib.pyplot as plt
 
 def check_port_availability(port):
     try:
@@ -41,15 +42,15 @@ def check_port_availability(port):
         return False
 
 # Replace 'COM3' with the port you want to check
-port_name = 'COM6'
+port_name = 'COM9'
 available = check_port_availability(port_name)
 print(f"Port {port_name} is available: {available}")
 
 
-Leonardo = serial.Serial('COM6',230400) #connectie met Arduino
+Leonardo = serial.Serial('COM9',230400) #connectie met Arduino
 fig, ax, line_theta, line_thetadot, plott, plottheta, plotthetadot = init_real_time_plot()
-time.sleep(1)
-duration = 50
+#time.sleep(1)
+duration = 100
 start_time = time.time()
 while time.time() - start_time < duration:
     print(Leonardo.readline().decode())
@@ -60,9 +61,9 @@ while time.time() - start_time < duration:
     Leonardo.write(f"{pps}\n".encode())
     #update the plot
     update_real_time_plot(fig, ax, line_theta, line_thetadot, plott, plottheta, plotthetadot, Leonardo)
-    time.sleep(0.1)
+    plt.pause(0.1)
    
+plt.show(block=True)
 
 print("Finished")
 Leonardo.write(f"{0}\n".encode())
-
