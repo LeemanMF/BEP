@@ -1,0 +1,112 @@
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BNO055.h>
+
+
+//Dit eerste stuk is om data op te slaan volgens chappie
+
+Adafruit_BNO055 bno = Adafruit_BNO055(55);
+
+void setup() {
+  Serial.begin(115200);
+  if (!bno.begin()) {
+    Serial.print("No BNO055 detected");
+    while (1);
+  }
+
+  bno.setExtCrystalUse(true);
+  
+  // Wait for the sensor to be fully calibrated
+  while (!bno.isFullyCalibrated()) {
+    uint8_t system, gyro, accel, mag;
+    bno.getCalibration(&system, &gyro, &accel, &mag);
+    Serial.print("CALIBRATION: Sys=");
+    Serial.print(system, DEC);
+    Serial.print(" Gyro=");
+    Serial.print(gyro, DEC);
+    Serial.print(" Accel=");
+    Serial.print(accel, DEC);
+    Serial.print(" Mag=");
+    Serial.println(mag, DEC);
+    delay(100);
+  }
+  
+  // Get the calibration data
+  adafruit_bno055_offsets_t calibData;
+  bno.getSensorOffsets(calibData);
+
+  // Save calibration data to EEPROM or print it for manual storage
+  Serial.println("Calibration done! Write these values down and use in your sketch:");
+  Serial.print("Accelerometer: ");
+  Serial.print(calibData.accel_offset_x); Serial.print(" ");
+  Serial.print(calibData.accel_offset_y); Serial.print(" ");
+  Serial.print(calibData.accel_offset_z); Serial.println();
+  Serial.print("Gyroscope: ");
+  Serial.print(calibData.gyro_offset_x); Serial.print(" ");
+  Serial.print(calibData.gyro_offset_y); Serial.print(" ");
+  Serial.print(calibData.gyro_offset_z); Serial.println();
+  Serial.print("Magnetometer: ");
+  Serial.print(calibData.mag_offset_x); Serial.print(" ");
+  Serial.print(calibData.mag_offset_y); Serial.print(" ");
+  Serial.print(calibData.mag_offset_z); Serial.println();
+  Serial.print("Accelerometer radius: ");
+  Serial.println(calibData.accel_radius);
+  Serial.print("Magnetometer radius: ");
+  Serial.println(calibData.mag_radius);
+}
+
+void loop() {
+  // Do nothing in the loop
+}
+
+
+
+
+// Nu komt het deel waarin je de opgeslagen data oproept
+
+
+
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BNO055.h>
+
+Adafruit_BNO055 bno = Adafruit_BNO055(55);
+
+void setup() {
+  Serial.begin(115200);
+  if (!bno.begin()) {
+    Serial.print("No BNO055 detected");
+    while (1);
+  }
+
+  bno.setExtCrystalUse(true);
+
+  // Set the previously saved calibration data
+  adafruit_bno055_offsets_t calibData;
+  calibData.accel_offset_x = /* saved value */;
+  calibData.accel_offset_y = /* saved value */;
+  calibData.accel_offset_z = /* saved value */;
+  calibData.gyro_offset_x = /* saved value */;
+  calibData.gyro_offset_y = /* saved value */;
+  calibData.gyro_offset_z = /* saved value */;
+  calibData.mag_offset_x = /* saved value */;
+  calibData.mag_offset_y = /* saved value */;
+  calibData.mag_offset_z = /* saved value */;
+  calibData.accel_radius = /* saved value */;
+  calibData.mag_radius = /* saved value */;
+
+  bno.setSensorOffsets(calibData);
+
+  // Confirm that the BNO055 is using the provided offsets
+  bno.setMode(Adafruit_BNO055::OPERATION_MODE_CONFIG);
+  delay(25);
+  bno.setSensorOffsets(calibData);
+  bno.setMode(Adafruit_BNO055::OPERATION_MODE_NDOF);
+  delay(25);
+
+  Serial.println("Calibration data set.");
+}
+
+void loop() {
+  // Your main code here
+}

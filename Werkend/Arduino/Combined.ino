@@ -30,6 +30,9 @@
 // Check I2C device address and correct line below (by default address is 0x29 or 0x28)
 //                                   id, address
 Adafruit_BNO055 bno = Adafruit_BNO055(-1, 0x28, &Wire);
+// Set the previously saved calibration data
+float euler_offset_y = -6.06;
+float euler_offset_z = 5.69;
 
 void setup(void)
 {
@@ -48,6 +51,13 @@ void setup(void)
 
 
   bno.setExtCrystalUse(true);
+
+  // Confirm that the BNO055 is using the provided offsets
+  // bno.setMode(Adafruit_BNO055::OPERATION_MODE_CONFIG);
+  // delay(25);
+  // bno.setSensorOffsets(calibData);
+  // bno.setMode(Adafruit_BNO055::OPERATION_MODE_NDOF);
+  // delay(25);
 
   // Serial.println("Calibration status values: 0=uncalibrated, 3=fully calibrated");
   pinMode(ENCA,INPUT);
@@ -71,9 +81,12 @@ void loop(void)
   imu::Vector<3> gyr = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
 
   /* Display the floating point data */
-  Serial.print(euler.y());
+  float euler_y = euler.y()- euler_offset_y;
+  float euler_z = euler.z()-euler_offset_z;
+  
+  Serial.print(euler_y);
   Serial.print(",");
-  Serial.print(euler.z());
+  Serial.print(euler_z);
   Serial.print(",");
   Serial.print(gyr.y());
   Serial.print(",");
@@ -139,4 +152,6 @@ void setMotor(int dir, int motor_value, int pwm, int in1, int in2){
     digitalWrite(in2,LOW);
   }  
 }
+  
+
   
