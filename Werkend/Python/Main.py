@@ -1,5 +1,5 @@
 import serial
-from Data import data, initialize_data_buffers
+from Data import data
 from Controller import LQR_control
 from Motoren import motor_drive
 import time
@@ -21,12 +21,13 @@ port_name = 'COM9'
 available = check_port_availability(port_name)
 print(f"Port {port_name} is available: {available}")
 
+Leonardo = serial.Serial('COM9',230400)
 # if available:
 #     cutoff_freq = 10
 #     fs = 100
 #     order = 5
 def plot():
-    Leonardo = serial.Serial('COM9',230400) #connectie met Arduino
+    Leonardo = new_func() #connectie met Arduino
     fig, ax, line_theta, line_thetadot, plott, plottheta, plotthetadot = init_real_time_plot()
 
     time.sleep(1)
@@ -36,15 +37,20 @@ def plot():
         print(Leonardo.readline().decode())
         theta,z,theta_dot,zdot = data(Leonardo)
         Fmotor1 = LQR_control(theta, theta_dot)
+        print(Fmotor1)
         pps = motor_drive(Fmotor1, theta, theta_dot)
         print(pps)
         Leonardo.write(f"{pps}\n".encode())
-        #update the plot
-        update_real_time_plot(line_theta, line_thetadot, plott, plottheta, plotthetadot, Leonardo)
+        
+        # Update the plot
+        update_real_time_plot(fig, ax, line_theta, line_thetadot,plott, plottheta, plotthetadot)
         plt.pause(0.1)
     plt.show(block=True)
 
-print("Finished")
+def new_func():
+    return serial.Serial('COM9',230400)
+
+print(data(Leonardo))
 Leonardo.write(f"{0}\n".encode())
     # Leonardo = serial.Serial(port_name, 230400)  # Connect to Arduino
     # fig, ax, line_theta, line_thetadot, line_raw_theta, line_filtered_theta, plott, plottheta, plotthetadot, plotrawtheta, plotfilteredtheta = init_real_time_plot()

@@ -3,11 +3,12 @@ import time
 from Filter import butter_lowpass_filter
 import numpy as np
 
-def initialize_data_buffers(buffer_size):
-    return np.zeros(buffer_size), np.zeros(buffer_size), np.zeros(buffer_size), np.zeros(buffer_size)
+# def initialize_data_buffers(buffer_size):
+# return np.zeros(buffer_size), np.zeros(buffer_size), np.zeros(buffer_size), np.zeros(buffer_size)
+#Leonardo = serial.Serial('COM9',230400)
 
-def data(connectie, theta_buffer, z_buffer, theta_dot_buffer, z_dot_buffer, cutoff_freq, fs, order=5):
-    arduinoData = connectie
+def data():
+    arduinoData = serial.Serial('COM9', 230400)
     while arduinoData.inWaiting() == 0:
         pass
     dataPacket = arduinoData.readline() #uitlezen van data
@@ -23,4 +24,6 @@ def data(connectie, theta_buffer, z_buffer, theta_dot_buffer, z_dot_buffer, cuto
     theta_dot=float(splitPacket[2])
     zdot=float(splitPacket[3])
     print ("theta=",theta," theta_dot=",theta_dot) # print variabelen
-    return theta,z,theta_dot,zdot      
+    return theta,z,theta_dot,zdot 
+theta, z, theta_dot, z_dot = data()     
+print(theta, z, theta_dot, z_dot)
