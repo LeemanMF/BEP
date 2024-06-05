@@ -1,0 +1,44 @@
+g = 9.81; % m/s^2
+l = 0.5; % meter - Is ook telkens anders
+b = 1.2; % damping coefficient Nm/(rad/s), moeten we nog testen
+m = 4.5; % kg
+amp = 1; % Amplitude van bewegend nulpunt
+freq = 1; % Frequency van bewegend nulpunt
+
+% Gain factor voor de sinus van systeem
+
+H = (amp*(freq^2))/l;
+
+%Hier definieer je de matrixen van state space
+
+A = [0 1; -g/l -b/(m*l)];
+B = [0; 1/(m*l)];
+C = [1 0];
+D = 0;
+
+%random initiele waardes om dynamica te testen
+
+theta_0 = pi/4; %initial conditions
+Thetadot_0 = 0; %initial conditions
+
+%Geeft de controleerbaarheid van het systeem
+
+e = eig(A); % Geeft eigenwaardes A matrix
+Co = ctrb(A,B); % Geeft controllability Matrix
+rank(Co); %rank controllability Matrix
+
+%LQR maken? Begrijp hier nog niet zo veel van
+sys = ss(A,B,C,D);
+Q = [1,0; 0,1];
+R = 0.1;
+[K,S,P] = lqr(sys,Q,R);
+
+
+%Reference gain computation
+
+Ac = A - B*K; % A_controllable Matrix
+Kf = -1/(C*inv(Ac)*B); %Reference Gain
+
+%Extra toevoeging can bewegende oorsprong
+
+d = [0; -(amp*freq)/l]; %Disturbance vector
